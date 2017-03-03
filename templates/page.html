@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Title</title>
+
+<script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="static/speex-js/bitstring.js"></script>
+<script type="text/javascript" src="static/speex-js/pcmdata.min.js"></script>
+<script type="text/javascript" src="static/speex-js/ogg.js"></script>
+<script type="text/javascript" src="static/speex-js/speex.min.js"></script>
+<script src="static/decoder.js"></script>
+</head>
+<body>
+<div style="margin: 20px 0 40px 20px;">
+  <p>点击获取Speex音频并解码：<a href="#" onclick="play_speex();">Play</a></p>
+</div>
+
+<div style="margin: 20px 0 40px 20px;">
+  <p>音频链接：<span id="blob-link"><span></p>
+</div>
+
+<div style="margin: 20px 0 40px 20px;">
+  <p>播放音频：<audio id="audio" controls></audio></p>
+</div>
+
+<div style="margin: 20px 0 40px 20px;">
+  <p>解码后(PCM)：</p>
+  <pre id="pcm"></pre>
+</div>
+
+<div style="margin: 20px 0 40px 20px;">
+  <p>解码前(Base64)：</p>
+  <pre id="base64"></pre>
+</div>
+
+<script>
+  function play_speex() {
+    $.get(
+      '/ogg',
+      {},
+      function (ogg) {
+        var buffer = atob(ogg);
+        var decoded = decode_ogg(buffer);
+
+	$("#blob-link").append(
+	  $('<a target="_blank"/>').attr('href', decoded.url).text(decoded.url)
+	);
+	$('#audio').attr('src', decoded.url);
+        $('#pcm').text(decoded.data);
+	$('#base64').text(ogg)
+        console.log(decoded);
+      },
+      "text"
+    );
+  }
+</script>
+</body>
+</html>
